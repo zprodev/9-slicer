@@ -1,6 +1,6 @@
 {
   "name": "9-slicer",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "Convert PNG to 9slice",
   "main": "dist/cjs/9slicer.js",
   "module": "dist/tsc/index.js",
