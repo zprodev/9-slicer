@@ -1,13 +1,19 @@
 {
   "name": "9-slicer",
   "version": "0.0.1",
-  "description": "Convert PNG to 9 slice format",
+  "description": "Convert PNG to 9slice",
   "main": "dist/cjs/9slicer.js",
   "module": "dist/tsc/index.js",
   "types": "dist/tsc/index.d.ts",
   "files": [
     "README.md",
     "dist"
+  ],
+  "keywords": [
+    "9slice",
+    "9patch",
+    "nineslice",
+    "ninepatch"
   ],
   "scripts": {
     "test": "mocha ./test/index.js",
