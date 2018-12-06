@@ -1,4 +1,4 @@
-const {slice} = require('./bundle/9slicer');
+const {slice} = require('../dist/cjs/9slicer');
 const {parse} = require('png.es');
 const assert = require('assert');
 const fs = require('fs');

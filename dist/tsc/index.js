@@ -45,7 +45,7 @@ export function slice(buffer, minReduction = 0) {
         }
     }
     return {
-        reduction: reduction,
+        reduction,
         buffer: pack(newPng),
         params: {
             width: png.width,

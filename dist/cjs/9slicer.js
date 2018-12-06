@@ -50,7 +50,7 @@ function slice(buffer, minReduction = 0) {
         }
     }
     return {
-        reduction: reduction,
+        reduction,
         buffer: png_es.pack(newPng),
         params: {
             width: png.width,

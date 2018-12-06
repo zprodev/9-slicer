@@ -2,6 +2,7 @@ import {COLOR_TYPE, pack, parse, PNG} from "png.es";
 
 /**
  * @license Copyright (c) 2018 zprodev
+ * https://github.com/zprodev/9-slicer
  */
 
 interface ISliceResult {
@@ -41,8 +42,8 @@ export function slice(buffer: Uint8Array, minReduction = 0): ISliceResult {
   const newWidth = png.width - (repeatArea.endX - repeatArea.startX);
   const newHeight = png.height - (repeatArea.endY - repeatArea.startY);
   const reduction = Math.floor((1 - (newWidth * newHeight) / (png.width * png.height)) * 100);
-  if(needsSliceX && needsSliceY){
-    if(reduction < minReduction){
+  if (needsSliceX && needsSliceY) {
+    if (reduction < minReduction) {
       needsSliceX = false;
       needsSliceY = false;
     }
@@ -76,7 +77,7 @@ export function slice(buffer: Uint8Array, minReduction = 0): ISliceResult {
   }
 
   return {
-    reduction: reduction,
+    reduction,
     buffer: pack(newPng),
     params: {
       width: png.width,

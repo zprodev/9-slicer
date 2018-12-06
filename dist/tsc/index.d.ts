@@ -1,5 +1,6 @@
 /**
  * @license Copyright (c) 2018 zprodev
+ * https://github.com/zprodev/9-slicer
  */
 interface ISliceResult {
     reduction: number;
