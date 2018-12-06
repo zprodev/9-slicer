@@ -1,47 +1,57 @@
-import {pack, parse, PNG, COLOR_TYPE} from "png.es";
+import {COLOR_TYPE, pack, parse, PNG} from "png.es";
 
 /**
  * @license Copyright (c) 2018 zprodev
  */
 
 interface ISliceResult {
-  sliced:boolean,
-  buffer:Uint8Array,
-  params:{
-    width:number,
-    height:number,
-    left:number,
-    right:number,
-    top:number,
-    bottom:number,
-  }
+  reduction: number;
+  buffer: Uint8Array;
+  params: {
+    width: number,
+    height: number,
+    left: number,
+    right: number,
+    top: number,
+    bottom: number,
+  };
 }
 
 interface IArea {
-  startX: number,
-  endX: number,
-  startY: number,
-  endY: number,
+  startX: number;
+  endX: number;
+  startY: number;
+  endY: number;
 }
 
-export function slice(buffer: Uint8Array): ISliceResult {
+export function slice(buffer: Uint8Array, minReduction = 0): ISliceResult {
   const png = parse(buffer);
   const trimArea = getTrimArea(png);
   const repeatArea = getRepeatArea(png, trimArea);
 
   let needsSliceX = false;
   let needsSliceY = false;
-  if(repeatArea.startX !== 0){
-    needsSliceX = true; 
+  if (repeatArea.startX !== 0) {
+    needsSliceX = true;
   }
-  if(repeatArea.startY !== 0){
-    needsSliceY = true; 
+  if (repeatArea.startY !== 0) {
+    needsSliceY = true;
   }
 
-  if(!needsSliceX && !needsSliceY){
+  const newWidth = png.width - (repeatArea.endX - repeatArea.startX);
+  const newHeight = png.height - (repeatArea.endY - repeatArea.startY);
+  const reduction = Math.floor((1 - (newWidth * newHeight) / (png.width * png.height)) * 100);
+  if(needsSliceX && needsSliceY){
+    if(reduction < minReduction){
+      needsSliceX = false;
+      needsSliceY = false;
+    }
+  }
+
+  if (!needsSliceX && !needsSliceY) {
     return {
-      sliced: false,
-      buffer: buffer,
+      reduction: 0,
+      buffer,
       params: {
         width: png.width,
         height: png.height,
@@ -49,35 +59,34 @@ export function slice(buffer: Uint8Array): ISliceResult {
         right: 0,
         top: 0,
         bottom: 0,
-      }
+      },
     };
   }
 
-  const newWidth = png.width - (repeatArea.endX - repeatArea.startX);
-  const newHeight = png.height - (repeatArea.endY - repeatArea.startY);
-  const newPng = new PNG(newWidth, newHeight, png.colorType)
+  const newPng = new PNG(newWidth, newHeight, png.colorType);
 
-  for(let x = 1; x <= png.width; x++){
-    for(let y = 1; y <= png.height; y++){
-      if((x <= repeatArea.startX || repeatArea.endX < x ) && (y <= repeatArea.startY || repeatArea.endY < y )){
-        const newX = (x <= repeatArea.startX)? x : x - (repeatArea.endX - repeatArea.startX);
-        const newY = (y <= repeatArea.startY)? y : y - (repeatArea.endY - repeatArea.startY);
+  for (let x = 1; x <= png.width; x++) {
+    for (let y = 1; y <= png.height; y++) {
+      if ((x <= repeatArea.startX || repeatArea.endX < x ) && (y <= repeatArea.startY || repeatArea.endY < y )) {
+        const newX = (x <= repeatArea.startX) ? x : x - (repeatArea.endX - repeatArea.startX);
+        const newY = (y <= repeatArea.startY) ? y : y - (repeatArea.endY - repeatArea.startY);
         newPng.setPixel(newX, newY, png.getPixel(x, y));
       }
     }
   }
+
   return {
-  sliced: false,
-  buffer: pack(newPng),
-  params: {
-    width: png.width,
-    height: png.height,
-    left: (needsSliceX)? repeatArea.startX - 1 : 0,
-    right: (needsSliceX)? png.width - repeatArea.endX : 0,
-    top: (needsSliceY)? repeatArea.startY - 1 : 0,
-    bottom: (needsSliceY)? png.height - repeatArea.endY : 0,
-  }
-};
+    reduction: reduction,
+    buffer: pack(newPng),
+    params: {
+      width: png.width,
+      height: png.height,
+      left: (needsSliceX) ? repeatArea.startX - 1 : 0,
+      right: (needsSliceX) ? png.width - repeatArea.endX : 0,
+      top: (needsSliceY) ? repeatArea.startY - 1 : 0,
+      bottom: (needsSliceY) ? png.height - repeatArea.endY : 0,
+    },
+  };
 }
 
 function getTrimArea(png: PNG): IArea {
@@ -86,7 +95,7 @@ function getTrimArea(png: PNG): IArea {
   const baseHgith = png.height;
   const pixelLength = png.pixelLength;
 
-  const area : IArea = {
+  const area: IArea = {
     startX: baseWidht,
     endX: 0,
     startY: baseHgith,
@@ -94,13 +103,13 @@ function getTrimArea(png: PNG): IArea {
   };
 
   let alphaIndex = 0;
-  if(png.colorType === COLOR_TYPE.RGBA){
+  if (png.colorType === COLOR_TYPE.RGBA) {
     alphaIndex = 3;
-  }else if(png.colorType === COLOR_TYPE.GRAY_ALPHA){
+  } else if (png.colorType === COLOR_TYPE.GRAY_ALPHA) {
     alphaIndex = 1;
   }
 
-  if(alphaIndex === 0){
+  if (alphaIndex === 0) {
     area.startX = 1;
     area.endX = baseWidht;
     area.startY = 1;
@@ -134,10 +143,10 @@ function getTrimArea(png: PNG): IArea {
 
   return area;
 }
-function getRepeatArea(png: PNG, targetArea:IArea):IArea {
+function getRepeatArea(png: PNG, targetArea: IArea): IArea {
   const pixelLength = png.pixelLength;
 
-  const area : IArea = {
+  const area: IArea = {
     startX: 0,
     endX: 0,
     startY: 0,
@@ -152,21 +161,21 @@ function getRepeatArea(png: PNG, targetArea:IArea):IArea {
     LOOP_Y: for (let y = targetArea.startY; y <= targetArea.endY; y++) {
       const nowPixel = png.getPixel(x, y);
       const nextPixel = png.getPixel(x + 1, y);
-      for(let i = 0; i < pixelLength; i++){
-        if(nowPixel[i] !== nextPixel[i]){
+      for (let i = 0; i < pixelLength; i++) {
+        if (nowPixel[i] !== nextPixel[i]) {
           isRepeat = false;
           break LOOP_Y;
         }
       }
     }
-    if(isRepeat){
+    if (isRepeat) {
       repeatCount++;
       if (2 <= repeatCount && repeatCountMax < repeatCount) {
         area.startX = x - repeatCount + 1;
         area.endX = x + 1;
         repeatCountMax = repeatCount;
       }
-    }else{
+    } else {
       repeatCount = 0;
     }
   }
@@ -177,22 +186,22 @@ function getRepeatArea(png: PNG, targetArea:IArea):IArea {
     LOOP_X: for (let x = targetArea.startX; x <= targetArea.endX; x++) {
       const nowPixel = png.getPixel(x, y);
       const nextPixel = png.getPixel(x, y + 1);
-      for(let i = 0; i < pixelLength; i++){
-        if(nowPixel[i] !== nextPixel[i]){
+      for (let i = 0; i < pixelLength; i++) {
+        if (nowPixel[i] !== nextPixel[i]) {
           isRepeat = false;
           break LOOP_X;
         }
       }
     }
 
-    if(isRepeat){
+    if (isRepeat) {
       repeatCount++;
       if (2 <= repeatCount && repeatCountMax < repeatCount) {
         area.startY = y - repeatCount + 1;
         area.endY = y + 1;
         repeatCountMax = repeatCount;
       }
-    }else{
+    } else {
       repeatCount = 0;
     }
   }
