@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1" />
+		<title>9-slicer</title>
+		<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+		<link rel="stylesheet" href="lib/material-components-web.min.css">
+		<link rel="stylesheet" href="index.css">
+	</head>
+	<body>
+		<header class="mdc-top-app-bar mdc-top-app-bar--short">
+			<div class="mdc-top-app-bar__row">
+				<section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-start">
+					<a href="https://github.com/zprodev/9-slicer" target="_blank" class="mdc-icon-button mdc-icon-button--on mdc-top-app-bar__action-item	">
+						<img src="assets/github.svg" class="mdc-icon-button__icon mdc-icon-button__icon--on"/>
+					</a>
+					<span class="mdc-top-app-bar__title">9 SLICER</span>
+				</section>
+				<section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-end">
+					<button id='downloadAll' class="material-icons mdc-top-app-bar__action-item">get_app</button>
+				</section>
+			</div>
+		</header>
+		<div id="dropArea" class="mdc-typography--headline1">Drop the PNG!</div>
+		<div class="mdc-layout-grid">
+			<div id="itemGrid" class="mdc-layout-grid__inner">
+			</div>
+		</div>
+		<div class="mdc-snackbar">
+			<div class="mdc-snackbar__text"></div>
+			<div class="mdc-snackbar__action-wrapper">
+				<button class="mdc-snackbar__action-button"></button>
+			</div>
+		</div>		
+		<script src="lib/jszip.min.js"></script>
+		<script src="lib/FileSaver.min.js"></script>
+		<script src="lib/material-components-web.min.js"></script>
+		<script type="module" src="index.js"></script>
+	</body>
+</html>

@@ -1,0 +1,18 @@
+body{
+  margin-top: 70px;
+  background-image: url('assets/back.svg');
+  background-size: 20px;
+}
+
+#dropArea {
+  height: 100%;
+  border: 3px #718792 dashed;
+  color: #718792;
+  font-size: 30px;
+  font-weight: bold;
+  text-align: center;
+}
+
+.mdc-top-app-bar {
+  background-color: #455a64;
+}
