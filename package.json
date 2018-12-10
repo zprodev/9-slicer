@@ -17,7 +17,7 @@
   ],
   "scripts": {
     "test": "mocha ./test/index.js",
-    "build": "run-s lint build:tsc build:rollup:module build:rollup:browser build:uglify:browser build:uglify:esm test",
+    "build": "run-s lint:build build:tsc build:rollup:module build:rollup:browser build:uglify:browser build:uglify:esm test",
     "dev": "run-s build:tsc build:rollup:module test",
     "build:tsc": "tsc",
     "build:rollup:module": "rollup -c",
@@ -25,7 +25,8 @@
     "build:uglify:browser": "uglifyjs dist/browser/9slicer.js -o dist/browser/9slicer.min.js -cm --comments --source-map",
     "build:uglify:esm": "uglifyjs dist/esm/9slicer.js -o dist/esm/9slicer.min.js -cm --comments --source-map",
     "demo": "browser-sync start --server demo",
-    "lint": "tslint --fix './src/**/*.ts'"
+    "lint:build": "tslint --fix './src/**/*.ts'",
+    "lint": "tslint './src/**/*.ts'"
   },
   "repository": {
     "type": "git",
